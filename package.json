@@ -1,6 +1,6 @@
 {
   "name": "@reactify/root",
-  "version": "0.0.1",
+  "type": "module",
   "workspaces": [
     "api",
     "bot"
