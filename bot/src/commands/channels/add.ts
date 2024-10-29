@@ -22,7 +22,7 @@ export default {
     const channel =
       interaction.options.getChannel("channel") ?? interaction.channel;
     const emoji = interaction.options.getString("emoji", true);
-    await api.guilds[":guildId"].channels.$post({
+    const res = await api.guilds[":guildId"].channels.$post({
       param: {
         guildId: interaction.guildId,
       },

@@ -37,8 +37,11 @@ export function getChannel(id: string) {
 }
 
 export async function addChannel(channel: Channel) {
-  db.query("INSERT INTO channels (id, emoji, message) VALUES (?, ?, ?)").run(
+  db.query(
+    "INSERT INTO channels (id, guildId, emoji, message) VALUES (?, ?, ?, ?)"
+  ).run(
     channel.id,
+    channel.guildId,
     channel.emoji,
     JSON.stringify(channel.message)
   );
