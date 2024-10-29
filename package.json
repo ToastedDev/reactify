@@ -6,8 +6,8 @@
     "bot"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "bun run --filter '*' dev"
   },
   "dependencies": {},
-  "devDependencies": {}
+  "devDependencies": { "dotenv-cli": "^7.4.2" }
 }
