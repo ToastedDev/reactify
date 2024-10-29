@@ -60,7 +60,6 @@ export default (client: Client<true>) => {
     } else {
       const data = await messageRes.json();
       const newReactions = data.reactions + 1;
-      console.log(newReactions);
       const message = replaceContent(
         channel.message,
         data.message as Message,
@@ -76,7 +75,6 @@ export default (client: Client<true>) => {
           reactions: newReactions,
         },
       });
-      console.log(newReactions);
     }
   });
 
