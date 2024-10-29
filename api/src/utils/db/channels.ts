@@ -32,6 +32,13 @@ export class Channel implements Channel {
   };
 }
 
+export function getChannels(guildId: string) {
+  return db
+    .query("SELECT * FROM channels WHERE guildId = ?")
+    .as(Channel)
+    .all(guildId);
+}
+
 export function getChannel(id: string) {
   return db.query("SELECT * FROM channels WHERE id = ?").as(Channel).get(id);
 }
