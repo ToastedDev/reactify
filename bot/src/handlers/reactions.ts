@@ -114,7 +114,7 @@ export default (client: Client<true>) => {
     const message = replaceContent(
       channel.message,
       data.message as Message,
-      data.reactions + 1
+      data.reactions - 1
     );
     const msg = await dcChannel.messages.fetch(data.botMessageId);
     await msg.edit(message);
