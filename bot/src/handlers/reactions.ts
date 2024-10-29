@@ -123,7 +123,7 @@ export default (client: Client<true>) => {
         id: reaction.message.id,
       },
       json: {
-        reactions: data.reactions + 1,
+        reactions: data.reactions - 1,
       },
     });
   });
