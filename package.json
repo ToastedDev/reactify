@@ -5,9 +5,14 @@
     "api",
     "bot"
   ],
+  "packageManager": "bun@1.1.32",
   "scripts": {
-    "dev": "bun run --filter '*' dev"
+    "dev": "turbo run dev"
   },
-  "dependencies": {},
-  "devDependencies": { "dotenv-cli": "^7.4.2" }
+  "dependencies": {
+    "turbo": "^2.2.3"
+  },
+  "devDependencies": {
+    "dotenv-cli": "^7.4.2"
+  }
 }
