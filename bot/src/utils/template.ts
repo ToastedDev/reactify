@@ -14,7 +14,11 @@ export function replaceContent(
     return obj.map((item) => replaceContent(item, message, reactions));
   } else if (typeof obj === "object" && obj !== null) {
     for (let key in obj) {
-      obj[key] = replaceContent(obj[key], message, reactions);
+      if (key === "embed") {
+        obj.embeds = [replaceContent(obj[key], message, reactions)];
+      } else {
+        obj[key] = replaceContent(obj[key], message, reactions);
+      }
     }
   }
   return obj;
