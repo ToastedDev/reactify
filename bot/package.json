@@ -3,8 +3,7 @@
   "module": "src/index.ts",
   "type": "module",
   "scripts": {
-    "dev": "bun with-env bun run --watch src/index.ts",
-    "with-env": "dotenv -e ../.env --"
+    "dev": "bun run --watch --env-file ../.env src/index.ts"
   },
   "dependencies": {
     "discord.js": "^14.16.3"

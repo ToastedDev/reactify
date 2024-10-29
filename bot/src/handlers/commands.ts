@@ -1,6 +1,8 @@
 import {
   ApplicationCommandOptionType,
   ApplicationCommandType,
+  Guild,
+  GuildMember,
   type ApplicationCommandData,
   type ApplicationCommandOptionData,
   type ApplicationCommandSubCommandData,
@@ -8,7 +10,7 @@ import {
   type ChatInputApplicationCommandData,
   type ChatInputCommandInteraction,
   type Client,
-  type PermissionResolvable,
+  type GuildTextBasedChannel,
 } from "discord.js";
 import { importDefault } from "@/utils/import";
 import { inspect } from "node:util";
@@ -17,12 +19,17 @@ import { readdir } from "node:fs/promises";
 import { join } from "node:path";
 import { slashCommandPermissions } from "@/utils/constants/permissions";
 
+interface Interaction extends ChatInputCommandInteraction<"cached"> {
+  member: GuildMember;
+  channel: GuildTextBasedChannel;
+}
+
 export interface Command
   extends Omit<
     ChatInputApplicationCommandData,
     "name" | "defaultMemberPermissions" | "dmPermission"
   > {
-  run: (interaction: ChatInputCommandInteraction) => any;
+  run: (interaction: Interaction) => any;
 }
 
 export default (client: Client<true>) => {
@@ -37,9 +44,9 @@ export default (client: Client<true>) => {
 
     try {
       const command = await importDefault<Command>(
-        `../commands/${interaction.commandName}`
+        `../commands/${commandSegments.join("/")}`
       );
-      return await command.run(interaction);
+      return await command.run(interaction as Interaction);
     } catch (err) {
       console.error(
         `Failed to run chat input command /${commandSegments.join(

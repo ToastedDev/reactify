@@ -5,4 +5,5 @@ export const slashCommandPermissions: Record<
   PermissionResolvable | null
 > = {
   ping: null,
+  channels: ["ManageChannels"],
 };
