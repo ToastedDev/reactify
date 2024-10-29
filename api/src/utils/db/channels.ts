@@ -1,46 +1,40 @@
 import { db } from ".";
 
-function Json(target: any, key: string) {
-  let value = target[key];
-
-  Object.defineProperty(target, key, {
-    get: () => (typeof value === "string" ? JSON.parse(value) : value),
-    set: (newValue) => {
-      value = newValue;
-    },
-    enumerable: true,
-    configurable: true,
-  });
-}
-
 export interface Channel {
   id: string;
   guildId: string;
   emoji: string;
   message: {
     content: string;
+    //TODO
+    embed?: any;
   };
 }
 
-export class Channel implements Channel {
-  id!: string;
-  guildId!: string;
-  emoji!: string;
-  @Json
-  message!: {
-    content: string;
+type DBChannel = Channel & {
+  message: string;
+};
+
+function formatChannel(channel: DBChannel) {
+  return {
+    id: channel.id,
+    guildId: channel.guildId,
+    emoji: channel.emoji,
+    message: JSON.parse(channel.message),
   };
 }
 
 export function getChannels(guildId: string) {
   return db
     .query("SELECT * FROM channels WHERE guildId = ?")
-    .as(Channel)
-    .all(guildId);
+    .all(guildId)
+    .map((channel) => formatChannel(channel as DBChannel));
 }
 
 export function getChannel(id: string) {
-  return db.query("SELECT * FROM channels WHERE id = ?").as(Channel).get(id);
+  return formatChannel(
+    db.query("SELECT * FROM channels WHERE id = ?").get(id) as DBChannel
+  );
 }
 
 export async function addChannel(channel: Channel) {
