@@ -34,20 +34,16 @@ export function getMessage(id: string) {
 }
 
 export function createMessage(message: Message) {
-  return db.exec(
-    `INSERT INTO messages (id, botMessageId, reactions, message) VALUES (?, ?, ?, ?)`,
-    [
-      message.id,
-      message.botMessageId,
-      message.reactions,
-      JSON.stringify(message.message),
-    ]
+  db.query(
+    "INSERT INTO messages (id, botMessageId, reactions, message) VALUES (?, ?, ?, ?)"
+  ).run(
+    message.id,
+    message.botMessageId,
+    message.reactions,
+    JSON.stringify(message.message)
   );
 }
 
 export function updateReactions(id: string, reactions: number) {
-  return db.exec(`UPDATE messages SET reactions = ? WHERE id = ?`, [
-    reactions,
-    id,
-  ]);
+  db.query("UPDATE messages SET reactions = ? WHERE id = ?").run(reactions, id);
 }

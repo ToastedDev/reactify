@@ -58,7 +58,7 @@ export const messagesRouter = new Hono()
       const { id } = c.req.param();
       const { reactions } = c.req.valid("json");
 
-      await updateReactions(id, reactions);
+      updateReactions(id, reactions);
 
       return c.json({ success: true }, 200);
     }

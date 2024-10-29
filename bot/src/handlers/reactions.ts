@@ -59,21 +59,24 @@ export default (client: Client<true>) => {
       });
     } else {
       const data = await messageRes.json();
+      const newReactions = data.reactions + 1;
+      console.log(newReactions);
       const message = replaceContent(
         channel.message,
         data.message as Message,
-        data.reactions + 1
+        newReactions
       );
       const msg = await dcChannel.messages.fetch(data.botMessageId);
       await msg.edit(message);
       await api.messages[":id"].$put({
         param: {
-          id: reaction.message.id,
+          id: data.id,
         },
         json: {
-          reactions: data.reactions + 1,
+          reactions: newReactions,
         },
       });
+      console.log(newReactions);
     }
   });
 
@@ -111,19 +114,20 @@ export default (client: Client<true>) => {
     if (messageRes.status == 404) return;
 
     const data = await messageRes.json();
+    const newReactions = data.reactions - 1;
     const message = replaceContent(
       channel.message,
       data.message as Message,
-      data.reactions - 1
+      newReactions
     );
     const msg = await dcChannel.messages.fetch(data.botMessageId);
     await msg.edit(message);
     await api.messages[":id"].$put({
       param: {
-        id: reaction.message.id,
+        id: data.id,
       },
       json: {
-        reactions: data.reactions - 1,
+        reactions: newReactions,
       },
     });
   });
