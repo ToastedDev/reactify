@@ -2,7 +2,12 @@ import { Hono } from "hono";
 import { onlyAllowInternalRequests } from "../utils/middleware";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
-import { addChannel, getChannels, type Channel } from "../utils/db/channels";
+import {
+  addChannel,
+  deleteChannel,
+  getChannels,
+  type Channel,
+} from "../utils/db/channels";
 
 const defaultMessage: Channel["message"] = {
   embed: {
@@ -48,5 +53,21 @@ export const channelsRouter = new Hono()
       });
 
       return c.json({ success: true }, 201);
+    }
+  )
+  .delete(
+    "/guilds/:guildId/channels",
+    onlyAllowInternalRequests,
+    zValidator(
+      "json",
+      z.object({
+        id: z.string(),
+      })
+    ),
+    async (c) => {
+      const { guildId } = c.req.param();
+      const { id } = c.req.valid("json");
+      await deleteChannel(id, guildId);
+      return c.json({ success: true }, 200);
     }
   );

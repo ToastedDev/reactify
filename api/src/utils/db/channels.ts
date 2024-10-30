@@ -66,3 +66,10 @@ export async function addChannel(channel: Channel) {
     JSON.stringify(channel.message)
   );
 }
+
+export async function deleteChannel(id: string, guildId: string) {
+  db.query("DELETE FROM channels WHERE id = ? AND guildId = ?").run(
+    id,
+    guildId
+  );
+}
