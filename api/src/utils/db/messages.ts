@@ -16,12 +16,10 @@ interface Message {
 
 type DBMessage = Sqlify<Message>;
 
-function formatMessage(channel: DBMessage) {
+function formatMessage(message: DBMessage): Message {
   return {
-    id: channel.id,
-    botMessageId: channel.botMessageId,
-    reactions: channel.reactions,
-    message: JSON.parse(channel.message),
+    ...message,
+    message: JSON.parse(message.message),
   };
 }
 

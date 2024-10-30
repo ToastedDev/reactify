@@ -13,11 +13,9 @@ export interface Channel {
 
 type DBChannel = Sqlify<Channel>;
 
-function formatChannel(channel: DBChannel) {
+function formatChannel(channel: DBChannel): Channel {
   return {
-    id: channel.id,
-    guildId: channel.guildId,
-    emoji: channel.emoji,
+    ...channel,
     message: JSON.parse(channel.message),
   };
 }
