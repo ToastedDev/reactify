@@ -1,39 +1,59 @@
-import { db } from ".";
-
-function Json(target: any, key: string) {
-  let value = target[key];
-
-  Object.defineProperty(target, key, {
-    get: () => (typeof value === "string" ? JSON.parse(value) : value),
-    set: (newValue) => {
-      value = newValue;
-    },
-    enumerable: true,
-    configurable: true,
-  });
-}
+import { db, type Sqlify } from ".";
 
 export interface Channel {
   id: string;
   guildId: string;
   emoji: string;
+  minReactions: number;
   message: {
-    content: string;
+    content?: string;
+    embed?: {
+      title?: string;
+      description?: string;
+      url?: string;
+      color?: string;
+      thumbnail?: {
+        url: string;
+      };
+      author?: {
+        name: string;
+        url?: string;
+        iconURL?: string;
+      };
+      fields?: {
+        name: string;
+        value: string;
+        inline?: boolean;
+      }[];
+      footer?: {
+        text: string;
+        iconURL?: string;
+      };
+      timestamp?: boolean;
+    };
   };
 }
 
-export class Channel implements Channel {
-  id!: string;
-  guildId!: string;
-  emoji!: string;
-  @Json
-  message!: {
-    content: string;
+type DBChannel = Sqlify<Channel>;
+
+function formatChannel(channel: DBChannel): Channel {
+  return {
+    ...channel,
+    message: JSON.parse(channel.message),
   };
+}
+
+export function getChannels(guildId: string) {
+  return db
+    .query("SELECT * FROM channels WHERE guildId = ?")
+    .all(guildId)
+    .map((channel) => formatChannel(channel as DBChannel));
 }
 
 export function getChannel(id: string) {
-  return db.query("SELECT * FROM channels WHERE id = ?").as(Channel).get(id);
+  return formatChannel(
+    db.query("SELECT * FROM channels WHERE id = ?").get(id) as DBChannel
+  );
 }
 
 export async function addChannel(channel: Channel) {
@@ -44,5 +64,12 @@ export async function addChannel(channel: Channel) {
     channel.guildId,
     channel.emoji,
     JSON.stringify(channel.message)
+  );
+}
+
+export async function deleteChannel(id: string, guildId: string) {
+  db.query("DELETE FROM channels WHERE id = ? AND guildId = ?").run(
+    id,
+    guildId
   );
 }

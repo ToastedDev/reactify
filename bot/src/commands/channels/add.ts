@@ -17,18 +17,27 @@ export default {
       type: ApplicationCommandOptionType.String,
       required: true,
     },
+    {
+      name: "minimum",
+      description:
+        "The minimum number of reactions to be sent into the channel",
+      type: ApplicationCommandOptionType.Integer,
+      required: false,
+    },
   ],
   run: async (interaction) => {
     const channel =
       interaction.options.getChannel("channel") ?? interaction.channel;
     const emoji = interaction.options.getString("emoji", true);
-    const res = await api.guilds[":guildId"].channels.$post({
+    const minimum = interaction.options.getInteger("minimum");
+    await api.guilds[":guildId"].channels.$post({
       param: {
         guildId: interaction.guildId,
       },
       json: {
         id: channel.id,
         emoji,
+        minReactions: minimum ?? 1,
       },
     });
 
