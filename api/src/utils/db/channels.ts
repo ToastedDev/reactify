@@ -4,6 +4,7 @@ export interface Channel {
   id: string;
   guildId: string;
   emoji: string;
+  minReactions: number;
   message: {
     content?: string;
     embed?: {

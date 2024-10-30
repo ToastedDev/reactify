@@ -13,6 +13,8 @@ export default (client: Client<true>) => {
     const { guild } = reaction.message;
     if (!guild) return;
 
+    const reactions = reaction.count ?? 1;
+
     const res = await api.guilds[":guildId"].channels.$get({
       param: {
         guildId: guild.id,
@@ -22,7 +24,7 @@ export default (client: Client<true>) => {
     const channel = channels.find(
       (channel) => reaction.emoji.name === channel.emoji
     );
-    if (!channel) return;
+    if (!channel || reactions < channel.minReactions) return;
 
     const dcChannel =
       guild.channels.cache.get(channel.id) ??

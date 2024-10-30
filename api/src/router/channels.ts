@@ -32,17 +32,19 @@ export const channelsRouter = new Hono()
       z.object({
         id: z.string(),
         emoji: z.string(),
+        minReactions: z.number().optional(),
       })
     ),
     async (c) => {
       const { guildId } = c.req.param();
 
-      const { id, emoji } = c.req.valid("json");
+      const { id, emoji, minReactions = 1 } = c.req.valid("json");
       await addChannel({
         id,
         guildId,
         emoji,
         message: defaultMessage,
+        minReactions,
       });
 
       return c.json({ success: true }, 201);

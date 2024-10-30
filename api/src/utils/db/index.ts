@@ -15,7 +15,8 @@ db.exec(
       id TEXT PRIMARY KEY,
       guildId TEXT NOT NULL,
       emoji TEXT NOT NULL,
-      message TEXT NOT NULL
+      message TEXT NOT NULL,
+      minReactions INTEGER NOT NULL DEFAULT 1
     )
   `
 );
