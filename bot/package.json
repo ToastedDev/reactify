@@ -3,7 +3,8 @@
   "module": "src/index.ts",
   "type": "module",
   "scripts": {
-    "dev": "BUN_CONFIG_NO_CLEAR_TERMINAL_ON_RELOAD=1 bun run --watch --env-file ../.env src/index.ts"
+    "dev": "BUN_CONFIG_NO_CLEAR_TERMINAL_ON_RELOAD=1 bun run --watch --env-file ../.env src/index.ts",
+    "start": "bun run --env-file ../.env src/index.ts"
   },
   "dependencies": {
     "discord.js": "^14.16.3"
