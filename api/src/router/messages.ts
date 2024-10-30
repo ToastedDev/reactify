@@ -25,6 +25,8 @@ export const messagesRouter = new Hono()
         reactions: z.number(),
         message: z.object({
           content: z.string(),
+          url: z.string().url(),
+          createdAt: z.string(),
           author: z.object({
             username: z.string(),
             avatar: z.string(),
@@ -41,7 +43,7 @@ export const messagesRouter = new Hono()
         id,
         botMessageId,
         reactions,
-        message: message,
+        message,
       });
 
       return c.json({ success: true }, 201);

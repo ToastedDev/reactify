@@ -6,6 +6,8 @@ interface Message {
   reactions: number;
   message: {
     content: string;
+    url: string;
+    createdAt: string;
     author: {
       username: string;
       avatar: string;

@@ -1,6 +1,6 @@
 import { api } from "@/utils/api";
-import { replaceContent } from "@/utils/template";
-import type { Client, Message } from "discord.js";
+import { replaceContent, type PartialMessage } from "@/utils/template";
+import type { Client } from "discord.js";
 
 export default (client: Client<true>) => {
   client.on("messageReactionAdd", async (reaction, user) => {
@@ -35,18 +35,21 @@ export default (client: Client<true>) => {
       },
     });
     if (messageRes.status == 404) {
-      const message = replaceContent(
-        channel.message,
-        {
-          content: reaction.message.content!,
-          author: {
-            username: reaction.message.author!.username,
-            avatar: reaction.message.author!.displayAvatarURL(),
-          },
-          attachment: reaction.message.attachments.first(),
+      const dbMessage = {
+        content: reaction.message.content!,
+        url: reaction.message.url,
+        createdAt: reaction.message.createdAt.toISOString(),
+        author: {
+          username: reaction.message.author!.username,
+          avatar: reaction.message.author!.displayAvatarURL(),
         },
-        reaction.count ?? 1
-      );
+        attachment: reaction.message.attachments.first(),
+      } satisfies PartialMessage;
+      const message = replaceContent(channel.message, {
+        message: dbMessage,
+        reactions: reaction.count ?? 1,
+        emoji: channel.emoji,
+      });
       const msg = await dcChannel.send(message);
       await msg.react(channel.emoji);
       await api.messages[":id"].$post({
@@ -54,14 +57,10 @@ export default (client: Client<true>) => {
           id: reaction.message.id,
         },
         json: {
-          botMessageId: msg.id,
+          botMessageId: msg.id!,
           reactions: reaction.count ?? 1,
           message: {
-            content: reaction.message!.content!,
-            author: {
-              username: reaction.message!.author!.username,
-              avatar: reaction.message.author!.displayAvatarURL(),
-            },
+            ...dbMessage,
             attachment: reaction.message.attachments.first()?.url,
           },
         },
@@ -69,11 +68,11 @@ export default (client: Client<true>) => {
     } else {
       const data = await messageRes.json();
       const newReactions = data.reactions + 1;
-      const message = replaceContent(
-        channel.message,
-        data.message,
-        newReactions
-      );
+      const message = replaceContent(channel.message, {
+        message: data.message,
+        reactions: newReactions,
+        emoji: channel.emoji,
+      });
       const msg = await dcChannel.messages.fetch(data.botMessageId);
       await msg.edit(message);
       await api.messages[":id"].$put({
@@ -122,7 +121,11 @@ export default (client: Client<true>) => {
 
     const data = await messageRes.json();
     const newReactions = data.reactions - 1;
-    const message = replaceContent(channel.message, data.message, newReactions);
+    const message = replaceContent(channel.message, {
+      message: data.message,
+      reactions: newReactions,
+      emoji: channel.emoji,
+    });
     const msg = await dcChannel.messages.fetch(data.botMessageId);
     await msg.edit(message);
     await api.messages[":id"].$put({

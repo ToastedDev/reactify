@@ -5,9 +5,31 @@ export interface Channel {
   guildId: string;
   emoji: string;
   message: {
-    content: string;
-    //TODO
-    embed?: any;
+    content?: string;
+    embed?: {
+      title?: string;
+      description?: string;
+      url?: string;
+      color?: string;
+      thumbnail?: {
+        url: string;
+      };
+      author?: {
+        name: string;
+        url?: string;
+        iconURL?: string;
+      };
+      fields?: {
+        name: string;
+        value: string;
+        inline?: boolean;
+      }[];
+      footer?: {
+        text: string;
+        iconURL?: string;
+      };
+      timestamp?: boolean;
+    };
   };
 }
 
