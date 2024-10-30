@@ -1,4 +1,4 @@
-import { db } from ".";
+import { db, type Sqlify } from ".";
 
 export interface Channel {
   id: string;
@@ -11,9 +11,7 @@ export interface Channel {
   };
 }
 
-type DBChannel = Channel & {
-  message: string;
-};
+type DBChannel = Sqlify<Channel>;
 
 function formatChannel(channel: DBChannel) {
   return {

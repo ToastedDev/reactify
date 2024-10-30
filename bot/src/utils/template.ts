@@ -1,8 +1,17 @@
-import type { Message } from "discord.js";
+import { Attachment, type APIEmbed } from "discord.js";
+
+interface PartialMessage {
+  content: string;
+  author: {
+    username: string;
+    avatar: string;
+  };
+  attachment?: Attachment | string;
+}
 
 export function replaceContent(
   obj: string | any[] | Record<string, any>,
-  message: Message,
+  message: PartialMessage,
   reactions: number
 ): any {
   if (typeof obj === "string") {
@@ -15,9 +24,24 @@ export function replaceContent(
   } else if (typeof obj === "object" && obj !== null) {
     for (let key in obj) {
       if (key === "embed") {
-        obj.embeds = [replaceContent(obj[key], message, reactions)];
+        console.log(message.attachment);
+        obj.embeds = [
+          {
+            ...replaceContent(obj[key], message, reactions),
+            image: {
+              url:
+                typeof message.attachment === "object"
+                  ? message.attachment.url
+                  : message.attachment,
+            },
+          } satisfies APIEmbed,
+        ];
       } else {
         obj[key] = replaceContent(obj[key], message, reactions);
+        obj.files =
+          typeof message.attachment === "object"
+            ? [message.attachment]
+            : undefined;
       }
     }
   }

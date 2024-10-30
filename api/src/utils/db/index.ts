@@ -1,5 +1,13 @@
 import { Database } from "bun:sqlite";
 
+export type Sqlify<T extends Record<string, any>> = {
+  [K in keyof T]: T[K] extends object
+    ? string
+    : T[K] extends boolean
+    ? 0 | 1
+    : T[K];
+};
+
 export const db = new Database("db.sqlite");
 db.exec(
   `

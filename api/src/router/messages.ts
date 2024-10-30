@@ -27,7 +27,9 @@ export const messagesRouter = new Hono()
           content: z.string(),
           author: z.object({
             username: z.string(),
+            avatar: z.string(),
           }),
+          attachment: z.string().optional(),
         }),
       })
     ),

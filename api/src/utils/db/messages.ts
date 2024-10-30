@@ -1,4 +1,4 @@
-import { db } from ".";
+import { db, type Sqlify } from ".";
 
 interface Message {
   id: string;
@@ -8,13 +8,13 @@ interface Message {
     content: string;
     author: {
       username: string;
+      avatar: string;
     };
+    attachment?: string;
   };
 }
 
-type DBMessage = Message & {
-  message: string;
-};
+type DBMessage = Sqlify<Message>;
 
 function formatMessage(channel: DBMessage) {
   return {

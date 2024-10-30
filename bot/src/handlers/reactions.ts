@@ -37,7 +37,14 @@ export default (client: Client<true>) => {
     if (messageRes.status == 404) {
       const message = replaceContent(
         channel.message,
-        reaction.message as Message,
+        {
+          content: reaction.message.content!,
+          author: {
+            username: reaction.message.author!.username,
+            avatar: reaction.message.author!.displayAvatarURL(),
+          },
+          attachment: reaction.message.attachments.first(),
+        },
         reaction.count ?? 1
       );
       const msg = await dcChannel.send(message);
@@ -53,7 +60,9 @@ export default (client: Client<true>) => {
             content: reaction.message!.content!,
             author: {
               username: reaction.message!.author!.username,
+              avatar: reaction.message.author!.displayAvatarURL(),
             },
+            attachment: reaction.message.attachments.first()?.url,
           },
         },
       });
@@ -62,7 +71,7 @@ export default (client: Client<true>) => {
       const newReactions = data.reactions + 1;
       const message = replaceContent(
         channel.message,
-        data.message as Message,
+        data.message,
         newReactions
       );
       const msg = await dcChannel.messages.fetch(data.botMessageId);
@@ -113,11 +122,7 @@ export default (client: Client<true>) => {
 
     const data = await messageRes.json();
     const newReactions = data.reactions - 1;
-    const message = replaceContent(
-      channel.message,
-      data.message as Message,
-      newReactions
-    );
+    const message = replaceContent(channel.message, data.message, newReactions);
     const msg = await dcChannel.messages.fetch(data.botMessageId);
     await msg.edit(message);
     await api.messages[":id"].$put({
